@@ -1,7 +1,7 @@
 <?php
 
 namespace Tests\Feature;
-
+use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 
 class AppEnvironmentTest extends TestCase
