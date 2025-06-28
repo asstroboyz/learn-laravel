@@ -3,7 +3,7 @@ namespace App\Data;
 
 class Bar
 {
-    private Foo $foo;
+    public Foo $foo;
 
     public function __construct(Foo $foo)
     {
@@ -12,6 +12,6 @@ class Bar
     }
     public function bar(): string
     {
-        return $this->foo > foo() . ' and Bar';
+        return $this->foo->foo() . ' and Bar';
     }
 }
