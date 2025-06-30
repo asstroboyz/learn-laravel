@@ -16,9 +16,9 @@ class UserController extends Controller
     }
     public function login(): Response
     {
-       return response()->view('user.login', [
+        return response()->view('user.login', [
             'title' => 'Login',
-          
+
         ]);
     }
     public function doLogin(Request $request): Response|RedirectResponse
@@ -47,8 +47,12 @@ class UserController extends Controller
 
     public function doLogout(Request $request): RedirectResponse
     {
-        $request->session()->forget('user');
-        return redirect('/')->with('success', 'Logout successful!');
+        if ($request->session()->has('user')) {
+            $request->session()->forget('user');
+            return redirect('/')->with('success', 'Logout successful!');
+        }
+
+ 
+        return redirect('/');
     }
-   
 }

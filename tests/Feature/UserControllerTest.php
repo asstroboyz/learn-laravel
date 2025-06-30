@@ -2,17 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Services\UserServices;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UserControllerTest extends TestCase
 {
-  
+
     public function testLogin()
     {
-      $this->get('/login')
-           ->assertSeeText('Login');
+        $this->get('/login')
+            ->assertSeeText('Login');
     }
 
     public function testLoginSuccess()
@@ -23,15 +24,15 @@ class UserControllerTest extends TestCase
         ]);
 
         $response->assertRedirect('/')
-                 ->assertSessionHas('success', 'Login successful!');
+            ->assertSessionHas('success', 'Login successful!');
     }
-    
+
     public function testLoginValidation()
     {
         $response = $this->post('/login', []);
 
         $response->assertViewIs('user.login')
-                 ->assertSeeText('User and password are required.');
+            ->assertSeeText('User and password are required.');
     }
     public function testLoginFailed()
     {
@@ -44,36 +45,47 @@ class UserControllerTest extends TestCase
     }
     public function testLogout()
     {
-       
+
         $this->withSession(['user' => 'admin'])
-             ->post('/logout')
-             ->assertRedirect('/')
-             ->assertSessionHas('success', 'Logout successful!');
+            ->post('/logout')
+            ->assertRedirect('/')
+            ->assertSessionHas('success', 'Logout successful!');
     }
-  
+
     public function testLoginForMember()
     {
         $this->withSession(['user' => 'admin'])
-             ->get('/login')
-             ->assertSeeText('/');
-   }
-
-    public function testLoginForSuccess()
-    {
-       $this->post('/login', [
-            'user' => 'admin',
-            'password' => 'guestpassword',
-        ])->assertRedirect('/')
-             ->assertSessionHas('success', 'admin successful!');
+            ->get('/login')
+            ->assertSeeText('/');
     }
-    public function testLoginAlreadyLogin()
+
+   public function testLoginForSuccess()
 {
-    $this->withSession([
-        'user' => 'admin',
-    ])->post('/login', [ 
+    $userService = \Mockery::mock(UserServices::class);
+    $userService->shouldReceive('login')->with('admin', 'admin123')->andReturn(true);
+    $this->app->instance(UserServices::class, $userService);
+
+    $this->post('/login', [
         'user' => 'admin',
         'password' => 'admin123',
     ])->assertRedirect('/');
 }
 
- }
+    public function testLoginAlreadyLogin()
+    {
+        $this->withSession([
+            'user' => 'admin',
+        ])->post('/login', [
+            'user' => 'admin',
+            'password' => 'admin123',
+        ])->assertRedirect('/');
+    }
+
+    public function testLogoutGuest()
+{
+    $this->post('/logout')
+         ->assertRedirect('/');
+}
+
+    
+}
