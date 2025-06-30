@@ -16,13 +16,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/',[\App\Http\Controllers\HomeController::class, 'home'])->name('home');
 
 
-Route::get('/vsycho', function () {
-    return "Ini adalah halaman vsycho";
-});
 
 Route::view('/template', 'template');
 Route::controller(\App\Http\Controllers\UserController::class)->group(function () {
     Route::get('/login', 'login')->middleware([\App\Http\Middleware\OnlyGuestMiddleWare::class]);
     Route::post('/login', 'doLogin')->middleware([\App\Http\Middleware\OnlyGuestMiddleWare::class]);
     Route::post('/logout', 'doLogout')->middleware([\App\Http\Middleware\OnlyMemberMiddleware::class]);
+});
+
+Route::controller(\App\Http\Controllers\TodolistController::class)
+->middleware([\App\Http\Middleware\OnlyMemberMiddleware::class])->group(function () {
+    Route::get('/todolist', 'todoList');
+    Route::post('/todolist', 'addTodo');
+    Route::delete('/todolist/{id}/delete', 'removeTodo');
 });
