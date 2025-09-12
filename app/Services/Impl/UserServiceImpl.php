@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Impl;
+
 use App\Services\UserServices;
 
 class UserServiceImpl implements UserServices
@@ -9,11 +10,11 @@ class UserServiceImpl implements UserServices
         'admin' => 'admin123',
     ];
 
-    public function login(string $user, string $password): bool 
+    public function login(string $user, string $password): bool
     {
         if (!isset($this->users[$user])) {
-    return false;
-}
+            return false;
+        }
 
         $correctPassword = $this->users[$user];
         return $password === $correctPassword;
