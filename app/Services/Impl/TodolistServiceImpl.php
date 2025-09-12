@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services\Impl;
 
 use App\Services\TodolistService;
@@ -8,16 +7,15 @@ use Illuminate\Support\Facades\Session;
 class TodolistServiceImpl implements TodolistService
 {
 
-    public function saveTodo(string $id, string $todo): void
+    public function saveTodo(string $id, string $todo, string $category): void
     {
-        if (!Session::exists("todolist")) {
-            Session::put("todolist", []);
-        }
-
-        Session::push("todolist", [
-            "id" => $id,
-            "todo" => $todo
-        ]);
+        $data   = session()->get('todolist', []);
+        $data[] = [
+            'id'       => $id,
+            'todo'     => $todo,
+            'category' => $category,
+        ];
+        session()->put('todolist', $data);
     }
 
     public function getTodolist(): array
@@ -38,4 +36,5 @@ class TodolistServiceImpl implements TodolistService
 
         Session::put("todolist", $todolist);
     }
+
 }
